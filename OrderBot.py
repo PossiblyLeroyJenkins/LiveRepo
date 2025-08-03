@@ -90,3 +90,17 @@ def KillOrder(orderId):
 	signature = hmac.new(secret_key.encode(), params.encode(), hashlib.sha256).hexdigest()
 	params += f'&signature={signature}'
 	response = requests.delete(baseurl+endpoint, headers=headers, data=params)
+
+def QueryOrder(orderId):
+	endpoint="/api/v3/order"
+	url=baseurl+endpoint
+	timestamp = str(int(time.time() * 1000))  # Current time in milliseconds
+		# Create the query string
+	params = f'symbol={symbol}&orderId={orderId}&timestamp={timestamp}'
+		# Create the signature
+	signature = hmac.new(secret_key.encode(), params.encode(), hashlib.sha256).hexdigest()
+		# Complete the query string with the signature
+	params += f'&signature={signature}'
+		# Make the GET request
+	response = requests.get(url, headers=headers, params=params)
+	return(json.loads(response.content))

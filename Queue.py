@@ -13,7 +13,7 @@ while 1:
 			LiveMarket=OrderBot.Market()
 			LivePrice=LiveMarket['bids'][0][0]
 			Slippage = float(LivePrice)/float(i['price'])
-			if fuck > 1 and Slippage > 1.01:
+			if fuck > 5 and Slippage > 1.01:
 				print("Stale.",time.time())
 				print(fuck,Slippage)
 				data = f"UPDATE Queue SET alive = 0 WHERE orderId = \'{i['orderId']}\'"
