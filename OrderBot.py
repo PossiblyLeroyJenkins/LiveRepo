@@ -58,12 +58,12 @@ def Market():
 ## CONTROL OR HANDLING.  IF SOMETHING ISN'T WORKING,
 ## IT IS PROBABLY BREAKING HERE. THERE IS A DIFFERENT
 ## FUNCTION TO CANCEL ORDERS.
-def PlaceOrder(side,order_type,price,quantity):
+def PlaceOrder(side,order_type,price,quantity,tablename):
 	## side = 'BUY' OR 'SELL'
 	## order_type = 'LIMIT' OR 'MARKET'
 	## price = REQUIRED FOR LIMIT ORDERS. BASE CURRENCY.
 	## quantity = AMOUNT. TRADE CURRENCY.
-
+	## tablename = WHICH TABLE TO ADD ORDER INFO TO IN dbase.
 	endpoint="/api/v3/order"
 
 	## GENERATES POST BODY.  SEE MEXCI API FOR INFO ON PARAMS.
@@ -76,7 +76,7 @@ def PlaceOrder(side,order_type,price,quantity):
 	# Check the response
 	if response.status_code == 200:
 		xx=json.loads(response.content)
-		y=f'INSERT INTO Queue (symbol,orderId,price,origQty,type,side,timestamp) VALUES (\'{symbol}\',\'{xx['orderId']}\',\'{price}\',\'{xx['origQty']}\',\'{xx['type']}\',\'{side}\',\'{str(xx['transactTime'])}\');'
+		y=f'INSERT INTO {tablename} (symbol,orderId,price,origQty,type,side,timestamp) VALUES (\'{symbol}\',\'{xx['orderId']}\',\'{price}\',\'{xx['origQty']}\',\'{xx['type']}\',\'{side}\',\'{str(xx['transactTime'])}\');'
 		requests.post('https://www.scrapefarm.click/gridbot/endpoint.php', data=y)
 		return(0)
 	else:
@@ -96,7 +96,7 @@ def QueryOrder(orderId):
 	url=baseurl+endpoint
 	timestamp = str(int(time.time() * 1000))  # Current time in milliseconds
 		# Create the query string
-	params = f'symbol={symbol}&orderId={orderId}&timestamp={timestamp}'
+	params = f'symbol={symbol}&orderId={orderId}&timestamp={timestamp}&recvWindow=2000'
 		# Create the signature
 	signature = hmac.new(secret_key.encode(), params.encode(), hashlib.sha256).hexdigest()
 		# Complete the query string with the signature

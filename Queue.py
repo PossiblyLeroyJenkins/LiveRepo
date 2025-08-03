@@ -14,11 +14,9 @@ while 1:
 			LivePrice=LiveMarket['bids'][0][0]
 			Slippage = float(LivePrice)/float(i['price'])
 			if fuck > 5 and Slippage > 1.01:
-				print("Stale.",time.time())
+				print("Stale Order Found.",time.time())
 				print(fuck,Slippage)
 				data = f"UPDATE Queue SET alive = 0 WHERE orderId = \'{i['orderId']}\'"
 				x=requests.post("https://www.scrapefarm.click/gridbot/endpoint.php", data=data)
-			else:
-				print("Not stale.",time.time())
-	print("Sleeping for 10 seconds.",time.time()*1000)
+	print("Queue Checked.",time.time()*1000)
 	time.sleep(10)
